@@ -1,5 +1,7 @@
 <?php
 
+// arquivo criado pelo breeze para fornecer uma organização na autenticação de login, register de usuário e caso alguém esqueça a senha.
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -11,15 +13,20 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// route::middleware consiste em um estado para uma requisição http antes de chegar na rota final, trabalhando como uma ponte para inspecionar, filtrar ou modificar
+// nesse caso o route::middleware esta agindo enquanto o usuario é apenas um convidado, onde ele pode se registrar, logar, ou apontar que esqueceu a senha.
 Route::middleware('guest')->group(function () {
+    // route::get trata de pegar o código de criação de um usuário
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
+    // route::post trata de enviar o que foi criado pela rota anterior.
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
+    // ao clicar em "Log in", o react envia um POST para /login. O laravel vê isso e diz: "Quem cuida disso é o AuthenticatedSessionController, store"
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
