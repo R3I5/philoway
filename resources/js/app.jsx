@@ -1,19 +1,25 @@
-import './bootstrap';
 import '../css/app.css';
-import React from 'react';
+import './bootstrap';
+
+import { createInertiaApp } from '@inertiajs/react';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 
-function App() {
-    return (
-        <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
-            <h1 className="text-4xl font-bold text-blue-500">
-                Olá, PhiloWay!
-            </h1>
-        </div>
-    );
-}
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-const root = document.getElementById('app');
-if (root) {
-    createRoot(root).render(<App />);
-}
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob('./Pages/**/*.jsx'),
+        ),
+    setup({ el, App, props }) {
+        const root = createRoot(el);
+
+        root.render(<App {...props} />);
+    },
+    progress: {
+        color: '#4B5563',
+    },
+});
